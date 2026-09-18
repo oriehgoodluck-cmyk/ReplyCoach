@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14121f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Reply Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #14121f;
+    --panel: #1d1a2e;
+    --panel-2: #262240;
+    --line: #372f58;
+    --text: #ece9f7;
+    --muted: #9d97bc;
+    --accent: #8b6cff;
+    --accent-ink: #12092e;
+    --good: #ffd7a8;
+    --bad: #ff8f9c;
+    --head: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+    --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.5;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 48px; }
+
+  .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .brand { font-family: var(--head); font-weight: 700; font-size: 26px; letter-spacing: -0.02em; margin: 0; }
+  .brand small { display: block; font-family: var(--body); font-weight: 400; font-size: 14px; color: var(--muted); letter-spacing: 0; }
+
+  button, select, textarea, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .icon-btn {
+    min-width: 44px; min-height: 44px; border-radius: 12px;
+    background: var(--panel); border: 1px solid var(--line);
+    display: grid; place-items: center;
+  }
+
+  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 5px; margin-bottom: 16px; }
+  .mode-btn { min-height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--muted); font-weight: 600; font-size: 14px; padding: 6px 4px; }
+  .mode-btn[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+  .control {
+    width: 100%; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 12px 14px; min-height: 46px;
+  }
+  textarea.control { min-height: 150px; resize: vertical; }
+  .control::placeholder { color: #6f6a8f; }
+
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .ghost { min-height: 44px; padding: 0 16px; border-radius: 12px; background: transparent; border: 1px dashed var(--line); color: var(--text); }
+  .thumb { display: none; align-items: center; gap: 8px; }
+  .thumb.on { display: flex; }
+  .thumb img { height: 44px; width: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+  .thumb button { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; padding: 0 6px; }
+
+  .go {
+    width: 100%; min-height: 52px; border: 0; border-radius: 14px;
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--head); font-weight: 700; font-size: 18px;
+  }
+  .go[disabled] { opacity: 0.6; cursor: progress; }
+
+  .out { margin-top: 24px; }
+  .out h2 { font-family: var(--head); font-size: 20px; margin: 0 0 10px; letter-spacing: -0.01em; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+  .card .tone { font-weight: 600; color: var(--good); margin-bottom: 4px; }
+  .card p { margin: 0 0 12px; white-space: pre-wrap; }
+  .copy { min-height: 40px; padding: 0 14px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); }
+  .why { color: var(--muted); margin-top: 6px; }
+  .prose { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .prose h3 { font-family: var(--head); font-size: 17px; margin: 16px 0 6px; }
+  .prose h3:first-child { margin-top: 0; }
+  .prose p { margin: 0 0 10px; }
+  .prose ul { margin: 0 0 10px; padding-left: 20px; }
+  .err { background: #3a1c2a; border: 1px solid #7a3450; color: #ffd2dc; border-radius: 12px; padding: 12px 14px; }
+
+  details.hist { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 14px; }
+  details.hist summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; }
+  .hist-item { display: block; width: 100%; text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+  .hist-item span { display: block; color: var(--muted); font-size: 13px; }
+  .clear { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; }
+
+  dialog { width: min(92vw, 460px); background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  dialog::backdrop { background: rgba(6, 4, 14, 0.7); }
+  dialog h2 { font-family: var(--head); margin: 0 0 6px; font-size: 22px; }
+  dialog p.note { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+  dialog .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+  .sec { min-height: 44px; padding: 0 18px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--line); }
+  .pri { min-height: 44px; padding: 0 18px; border-radius: 12px; background: var(--accent); border: 0; color: var(--accent-ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1 class="brand">Reply Coach<small>Read the conversation. Send the right message.</small></h1>
+    <button class="icon-btn" id="openSettings" aria-label="Settings">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <div class="modes" role="tablist" aria-label="What do you need?">
+    <button class="mode-btn" role="tab" data-mode="reply" aria-selected="true">Write a reply</button>
+    <button class="mode-btn" role="tab" data-mode="flags" aria-selected="false">Check red flags</button>
+    <button class="mode-btn" role="tab" data-mode="decode" aria-selected="false">Decode it</button>
+  </div>
+
+  <div class="field">
+    <label for="who">Who is this with?</label>
+    <select id="who" class="control">
+      <option>Someone I'm dating</option>
+      <option>A crush</option>
+      <option>My partner</option>
+      <option>An ex</option>
+      <option>A friend</option>
+      <option>A family member</option>
+      <option>A coworker or boss</option>
+      <option>Someone else</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="msg">Paste the conversation</label>
+    <textarea id="msg" class="control" placeholder="Paste the messages here. Include both sides if you can."></textarea>
+  </div>
+
+  <div class="row">
+    <button class="ghost" id="pick" type="button">Add a screenshot</button>
+    <input type="file" id="file" accept="image/*" hidden>
+    <div class="thumb" id="thumb"><img id="thumbImg" alt="Attached screenshot"><button type="button" id="rmImg">Remove</button></div>
+  </div>
+
+  <div class="field">
+    <label for="goal">What do you want out of this? (optional)</label>
+    <input id="goal" class="control" placeholder="Example: set up a date, apologize, say no politely">
+  </div>
+
+  <button class="go" id="go" type="button">Write replies</button>
+
+  <section class="out" id="out" aria-live="polite"></section>
+
+  <details class="hist" id="hist">
+    <summary>History</summary>
+    <div id="histList"></div>
+    <button class="clear" id="clearHist" type="button">Clear history</button>
+  </details>
+</div>
+
+<dialog id="settings">
+  <h2>Settings</h2>
+  <p class="note">Your key is saved only in this browser on this device. It is sent only to Google to get answers.</p>
+  <div class="field">
+    <label for="key">Gemini API key</label>
+    <input id="key" class="control" type="password" autocomplete="off" placeholder="Paste your key">
+  </div>
+  <div class="field">
+    <label for="model">Model</label>
+    <input id="model" class="control" value="gemini-2.5-flash">
+  </div>
+  <div class="actions">
+    <button class="sec" id="closeSettings" type="button">Cancel</button>
+    <button class="pri" id="saveSettings" type="button">Save</button>
+  </div>
+</dialog>
+
+<script>
+const $ = (s) => document.querySelector(s);
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+const BASE = `You are a communication coach inside a personal app. The user shares a conversation with someone (pasted text and/or a screenshot) and wants help understanding it and responding with confidence.
+Rules:
+- Be direct, warm, specific and concise.
+- Base everything on what is actually in the messages. When something is unclear, say so instead of guessing motives. Never diagnose people.
+- Never help deceive, pressure, guilt-trip, gaslight or emotionally manipulate anyone. If the user's goal leans that way, give an honest, confident alternative that still protects their interests.
+- Match the user's texting style: natural, short, no corporate tone.`;
+
+const MODES = {
+  reply: {
+    button: "Write replies",
+    title: "Reply options",
+    json: true,
+    prompt: `Write 3 different replies the user could send next. Give each a short tone label (for example Warm, Direct, Playful) and the exact message text. Add one sentence in "why" explaining which option fits best and why.
+Return JSON only, with this shape: {"replies":[{"tone":"","text":""}],"why":""}`
+  },
+  flags: {
+    button: "Check for red flags",
+    title: "Red flag check",
+    json: false,
+    prompt: `Read the conversation for healthy and unhealthy patterns. Use these headings, written as lines starting with "## ": What stands out, Green flags, Red flags, What I would do next.
+Under each heading use short "- " bullets. Point to short phrases from the messages as evidence. Say plainly when a few messages are not enough to call something a pattern.`
+  },
+  decode: {
+    button: "Decode this",
+    title: "What it likely means",
+    json: false,
+    prompt: `Explain what the other person likely means and feels. Use these headings, written as lines starting with "## ": Most likely reading, Another possible reading, How to tell the difference, A question you could ask.
+Keep each section short and grounded in the text.`
+  }
+};
+
+let mode = "reply";
+let image = null; // base64 jpeg, no prefix
+
+/* ---------- mode tabs ---------- */
+document.querySelectorAll(".mode-btn").forEach((b) => {
+  b.addEventListener("click", () => {
+    mode = b.dataset.mode;
+    document.querySelectorAll(".mode-btn").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+    $("#go").textContent = MODES[mode].button;
+  });
+});
+
+/* ---------- screenshot ---------- */
+$("#pick").addEventListener("click", () => $("#file").click());
+$("#rmImg").addEventListener("click", () => { image = null; $("#thumb").classList.remove("on"); $("#file").value = ""; });
+$("#file").addEventListener("change", (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  const url = URL.createObjectURL(f);
+  const img = new Image();
+  img.onload = () => {
+    const max = 1400;
+    const scale = Math.min(1, max / Math.max(img.width, img.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.width * scale);
+    c.height = Math.round(img.height * scale);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    const dataUrl = c.toDataURL("image/jpeg", 0.85);
+    image = dataUrl.split(",")[1];
+    $("#thumbImg").src = dataUrl;
+    $("#thumb").classList.add("on");
+    URL.revokeObjectURL(url);
+  };
+  img.onerror = () => showError("That image could not be read. Try a different screenshot.");
+  img.src = url;
+});
+
+/* ---------- settings ---------- */
+const dlg = $("#settings");
+function openSettings() {
+  $("#key").value = store.get("key", "");
+  $("#model").value = store.get("model", "gemini-2.5-flash");
+  dlg.showModal();
+}
+$("#openSettings").addEventListener("click", openSettings);
+$("#closeSettings").addEventListener("click", () => dlg.close());
+$("#saveSettings").addEventListener("click", () => {
+  store.set("key", $("#key").value.trim());
+  store.set("model", $("#model").value.trim() || "gemini-2.5-flash");
+  dlg.close();
+});
+
+/* ---------- output helpers ---------- */
+function clearOut() { $("#out").replaceChildren(); }
+function showError(msg) {
+  clearOut();
+  const d = document.createElement("div");
+  d.className = "err";
+  d.textContent = msg;
+  $("#out").appendChild(d);
+}
+function setBusy(on) {
+  const b = $("#go");
+  b.disabled = on;
+  b.textContent = on ? "Thinking..." : MODES[mode].button;
+}
+function copyText(text, btn) {
+  const done = () => { const old = btn.textContent; btn.textContent = "Copied"; setTimeout(() => (btn.textContent = old), 1400); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, done);
+  } else {
+    const t = document.createElement("textarea");
+    t.value = text; document.body.appendChild(t); t.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    t.remove(); done();
+  }
+}
+function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function formatProse(raw) {
+  const lines = esc(raw).split("\n");
+  let html = "", inList = false;
+  const bold = (t) => t.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  for (const line of lines) {
+    const l = line.trim();
+    if (l.startsWith("- ") || l.startsWith("* ")) {
+      if (!inList) { html += "<ul>"; inList = true; }
+      html += "<li>" + bold(l.slice(2)) + "</li>";
+      continue;
+    }
+    if (inList) { html += "</ul>"; inList = false; }
+    if (l.startsWith("## ")) html += "<h3>" + bold(l.slice(3)) + "</h3>";
+    else if (l) html += "<p>" + bold(l) + "</p>";
+  }
+  if (inList) html += "</ul>";
+  return html;
+}
+function showResult(m, out) {
+  clearOut();
+  const wrap = $("#out");
+  const h = document.createElement("h2");
+  h.textContent = MODES[m].title;
+  wrap.appendChild(h);
+
+  if (MODES[m].json) {
+    let data = null;
+    try { data = JSON.parse(out.replace(/```json|```/g, "").trim()); } catch (e) {}
+    if (data && Array.isArray(data.replies)) {
+      data.replies.forEach((r) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        const tone = document.createElement("div");
+        tone.className = "tone";
+        tone.textContent = r.tone || "Option";
+        const p = document.createElement("p");
+        p.textContent = r.text || "";
+        const b = document.createElement("button");
+        b.className = "copy";
+        b.type = "button";
+        b.textContent = "Copy";
+        b.addEventListener("click", () => copyText(r.text || "", b));
+        card.append(tone, p, b);
+        wrap.appendChild(card);
+      });
+      if (data.why) {
+        const w = document.createElement("p");
+        w.className = "why";
+        w.textContent = data.why;
+        wrap.appendChild(w);
+      }
+      return;
+    }
+  }
+  const box = document.createElement("div");
+  box.className = "prose";
+  box.innerHTML = formatProse(out);
+  wrap.appendChild(box);
+}
+
+/* ---------- history ---------- */
+function loadHist() { return store.get("history", []); }
+function saveHist(item) {
+  const list = loadHist();
+  list.unshift(item);
+  store.set("history", list.slice(0, 30));
+  renderHist();
+}
+function renderHist() {
+  const box = $("#histList");
+  box.replaceChildren();
+  const list = loadHist();
+  if (!list.length) {
+    const p = document.createElement("p");
+    p.style.color = "var(--muted)";
+    p.textContent = "Nothing here yet. Your past results will show up on this device.";
+    box.appendChild(p);
+    return;
+  }
+  list.forEach((it) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "hist-item";
+    b.textContent = it.preview;
+    const s = document.createElement("span");
+    s.textContent = MODES[it.mode].title + " - " + new Date(it.t).toLocaleString();
+    b.appendChild(s);
+    b.addEventListener("click", () => { showResult(it.mode, it.out); window.scrollTo({ top: $("#out").offsetTop - 12, behavior: "smooth" }); });
+    box.appendChild(b);
+  });
+}
+$("#clearHist").addEventListener("click", () => { store.set("history", []); renderHist(); });
+
+/* ---------- run ---------- */
+async function run() {
+  const key = store.get("key", "");
+  if (!key) { openSettings(); return; }
+  const text = $("#msg").value.trim();
+  if (!text && !image) { showError("Paste the conversation or add a screenshot first."); return; }
+
+  const who = $("#who").value;
+  const goal = $("#goal").value.trim();
+  const m = mode;
+  setBusy(true);
+  clearOut();
+  try {
+    const parts = [{ text: "Who it is with: " + who + "\nWhat I want: " + (goal || "not specified") + "\n\nConversation:\n" + (text || "(see the screenshot)") }];
+    if (image) parts.push({ inlineData: { mimeType: "image/jpeg", data: image } });
+    const body = {
+      systemInstruction: { parts: [{ text: BASE + "\n\n" + MODES[m].prompt }] },
+      contents: [{ role: "user", parts }],
+      generationConfig: MODES[m].json ? { responseMimeType: "application/json" } : {}
+    };
+    const model = store.get("model", "gemini-2.5-flash");
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error((data && data.error && data.error.message) || ("Request failed (" + res.status + ")."));
+    const cand = data.candidates && data.candidates[0];
+    const out = cand && cand.content && cand.content.parts ? cand.content.parts.map((p) => p.text || "").join("") : "";
+    if (!out) throw new Error("The AI returned nothing. Try again, or reword the conversation.");
+    showResult(m, out);
+    saveHist({ t: Date.now(), mode: m, preview: (text || "Screenshot").slice(0, 80), out });
+  } catch (e) {
+    showError("Something went wrong: " + e.message);
+  } finally {
+    setBusy(false);
+  }
+}
+$("#go").addEventListener("click", run);
+
+renderHist();
+</script>
+</body>
+</html>
