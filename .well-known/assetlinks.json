@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "io.github.oriehgoodluck_cmyk.twa",
+    "sha256_cert_fingerprints": ["6F:85:C2:4D:B1:A4:8E:DE:B8:98:35:AC:F1:11:57:8D:38:3B:67:0D:08:03:DE:B1:C2:FC:53:2B:D9:9B:D0:21"]
+  }
+}]
