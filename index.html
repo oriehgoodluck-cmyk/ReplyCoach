@@ -429,4 +429,27 @@ async function run() {
       generationConfig: MODES[m].json ? { responseMimeType: "application/json" } : {}
     };
     const model = store.get("model", "gemini-2.5-flash");
-    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateC
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error((data && data.error && data.error.message) || ("Request failed (" + res.status + ")."));
+    const cand = data.candidates && data.candidates[0];
+    const out = cand && cand.content && cand.content.parts ? cand.content.parts.map((p) => p.text || "").join("") : "";
+    if (!out) throw new Error("The AI returned nothing. Try again, or reword the conversation.");
+    showResult(m, out);
+    saveHist({ t: Date.now(), mode: m, preview: (text || "Screenshot").slice(0, 80), out });
+  } catch (e) {
+    showError("Something went wrong: " + e.message);
+  } finally {
+    setBusy(false);
+  }
+}
+$("#go").addEventListener("click", run);
+
+renderHist();
+</script>
+</body>
+</html>
