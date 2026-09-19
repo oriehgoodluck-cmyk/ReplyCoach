@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Reply Coach</title>
-  <link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg">
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js")}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -152,6 +152,15 @@
   </div>
 
   <div class="field">
+    <label for="bold">How bold?</label>
+    <select id="bold" class="control">
+      <option>Smooth</option>
+      <option selected>Bold</option>
+      <option>Max</option>
+    </select>
+  </div>
+
+  <div class="field">
     <label for="goal">What do you want out of this? (optional)</label>
     <input id="goal" class="control" placeholder="Example: set up a date, apologize, say no politely">
   </div>
@@ -192,19 +201,24 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 };
 
-const BASE = `You are a communication coach inside a personal app. The user shares a conversation with someone (pasted text and/or a screenshot) and wants help understanding it and responding with confidence.
+const BASE = `You are a sharp social-dynamics and communication coach inside a personal app, with a mentalist's eye for people. The user shares a conversation with someone (pasted text and/or a screenshot) and wants help reading it and replying with real pull.
 Rules:
-- Be direct, warm, specific and concise.
-- Base everything on what is actually in the messages. When something is unclear, say so instead of guessing motives. Never diagnose people.
-- Never help deceive, pressure, guilt-trip, gaslight or emotionally manipulate anyone. If the user's goal leans that way, give an honest, confident alternative that still protects their interests.
-- Match the user's texting style: natural, short, no corporate tone.`;
+- Be confident, direct and specific. Never bland, needy, over-polite or people-pleasing.
+- Read behavior like a mentalist: word choice, reply speed and length, who leads, who asks the questions, what they avoid saying. Say when you are guessing.
+- Influence that is fair game: calm confidence, humor, teasing, curiosity hooks, good timing, holding your frame, saying less, making them work a little, honest scarcity of your attention.
+- Never help with gaslighting, guilt-tripping, threats, lying about facts, exploiting insecurities, isolating someone, or pressuring someone who said no. If the goal goes there, say so in one line and give a stronger honest move instead.
+- Write like a real person texting: short, natural, no corporate tone.`;
 
 const MODES = {
   reply: {
     button: "Write replies",
     title: "Reply options",
     json: true,
-    prompt: `Write 3 different replies the user could send next. Give each a short tone label (for example Warm, Direct, Playful) and the exact message text. Add one sentence in "why" explaining which option fits best and why.
+    prompt: `Write 3 replies the user could send next, each in a clearly different style, with the exact message text:
+1. Magnetic: playful, teasing, confident.
+2. Unbothered: calm, low-effort, holds the frame, does not chase.
+3. Hook: leaves a curiosity gap or a sharp observation about them that makes them want to reply.
+Match the boldness level the user picked: Smooth = warm but confident, Bold = clearly confident with edge, Max = maximum charisma and edge without insulting or pressuring them. Keep every reply short, like a real text. Add one sentence in "why" on which one fits best and what it does to the dynamic.
 Return JSON only, with this shape: {"replies":[{"tone":"","text":""}],"why":""}`
   },
   flags: {
@@ -218,8 +232,8 @@ Under each heading use short "- " bullets. Point to short phrases from the messa
     button: "Decode this",
     title: "What it likely means",
     json: false,
-    prompt: `Explain what the other person likely means and feels. Use these headings, written as lines starting with "## ": Most likely reading, Another possible reading, How to tell the difference, A question you could ask.
-Keep each section short and grounded in the text.`
+    prompt: `Read the other person like a mentalist. Use these headings, written as lines starting with "## ": What they are really signaling, What their style reveals, Most likely reading, Another possible reading, Best move.
+Look at word choice, length, speed, questions, and what they avoid. Be specific and say clearly when something is a guess.`
   }
 };
 
@@ -407,7 +421,7 @@ async function run() {
   setBusy(true);
   clearOut();
   try {
-    const parts = [{ text: "Who it is with: " + who + "\nWhat I want: " + (goal || "not specified") + "\n\nConversation:\n" + (text || "(see the screenshot)") }];
+    const parts = [{ text: "Who it is with: " + who + "\nBoldness: " + $("#bold").value + "\nWhat I want: " + (goal || "not specified") + "\n\nConversation:\n" + (text || "(see the screenshot)") }];
     if (image) parts.push({ inlineData: { mimeType: "image/jpeg", data: image } });
     const body = {
       systemInstruction: { parts: [{ text: BASE + "\n\n" + MODES[m].prompt }] },
@@ -415,27 +429,4 @@ async function run() {
       generationConfig: MODES[m].json ? { responseMimeType: "application/json" } : {}
     };
     const model = store.get("model", "gemini-2.5-flash");
-    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-      body: JSON.stringify(body)
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error((data && data.error && data.error.message) || ("Request failed (" + res.status + ")."));
-    const cand = data.candidates && data.candidates[0];
-    const out = cand && cand.content && cand.content.parts ? cand.content.parts.map((p) => p.text || "").join("") : "";
-    if (!out) throw new Error("The AI returned nothing. Try again, or reword the conversation.");
-    showResult(m, out);
-    saveHist({ t: Date.now(), mode: m, preview: (text || "Screenshot").slice(0, 80), out });
-  } catch (e) {
-    showError("Something went wrong: " + e.message);
-  } finally {
-    setBusy(false);
-  }
-}
-$("#go").addEventListener("click", run);
-
-renderHist();
-</script>
-</body>
-</html>
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateC
