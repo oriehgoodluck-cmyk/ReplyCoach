@@ -3,6 +3,6 @@
   "target": {
     "namespace": "android_app",
     "package_name": "io.github.oriehgoodluck_cmyk.twa",
-    "sha256_cert_fingerprints": ["6F:85:C2:4D:B1:A4:8E:DE:B8:98:35:AC:F1:11:57:8D:38:3B:67:0D:08:03:DE:B1:C2:FC:53:2B:D9:9B:D0:21"]
+    "sha256_cert_fingerprints": ["97:4D:59:B5:09:38:2A:AC:B9:C0:C2:88:0A:21:C0:F4:56:9C:D4:09:75:63:B6:80:10:7A:95:CA:24:57:64:60"]
   }
 }]
