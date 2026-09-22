@@ -7,9 +7,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Reply Coach</title>
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon.svg">
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js")}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -35,6 +32,177 @@
     color: var(--text);
     font-family: var(--body);
     font-size: 16px;
+    line-height: 1.5;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 48px; }
+
+  .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .brand { font-family: var(--head); font-weight: 700; font-size: 26px; letter-spacing: -0.02em; margin: 0; }
+  .brand small { display: block; font-family: var(--body); font-weight: 400; font-size: 14px; color: var(--muted); letter-spacing: 0; }
+
+  button, select, textarea, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .icon-btn {
+    min-width: 44px; min-height: 44px; border-radius: 12px;
+    background: var(--panel); border: 1px solid var(--line);
+    display: grid; place-items: center;
+  }
+
+  .modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 5px; margin-bottom: 16px; }
+  .mode-btn { min-height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--muted); font-weight: 600; font-size: 14px; padding: 6px 4px; }
+  .mode-btn[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+
+  .conf-wrap { margin-bottom: 18px; }
+  .conf-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .conf-label b { color: var(--text); }
+  .conf-track { height: 10px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
+  .conf-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #b79bff); border-radius: 999px; }
+
+  .msg-block { margin-bottom: 14px; }
+  .msg-quote { background: var(--panel-2); border: 1px solid var(--line); border-radius: 14px 14px 4px 14px; padding: 12px 14px; margin-bottom: 6px; font-style: italic; color: var(--text); }
+  .msg-read { background: var(--panel); border: 1px solid var(--line); border-radius: 4px 14px 14px 14px; padding: 12px 14px; color: var(--muted); font-size: 14px; }
+  .msg-read b { color: var(--text); }
+  .overall-box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+  .overall-box h3 { font-family: var(--head); font-size: 16px; margin: 0 0 6px; }
+
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+  .control {
+    width: 100%; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 12px 14px; min-height: 46px;
+  }
+  textarea.control { min-height: 150px; resize: vertical; }
+  .control::placeholder { color: #6f6a8f; }
+
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .ghost { min-height: 44px; padding: 0 16px; border-radius: 12px; background: transparent; border: 1px dashed var(--line); color: var(--text); }
+  .thumb { display: none; align-items: center; gap: 8px; }
+  .thumb.on { display: flex; }
+  .thumb img { height: 44px; width: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+  .thumb button { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; padding: 0 6px; }
+
+  .go {
+    width: 100%; min-height: 52px; border: 0; border-radius: 14px;
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--head); font-weight: 700; font-size: 18px;
+  }
+  .go[disabled] { opacity: 0.6; cursor: progress; }
+
+  .out { margin-top: 24px; }
+  .out h2 { font-family: var(--head); font-size: 20px; margin: 0 0 10px; letter-spacing: -0.01em; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+  .card .tone { font-weight: 600; color: var(--good); margin-bottom: 4px; }
+  .card p { margin: 0 0 12px; white-space: pre-wrap; }
+  .copy { min-height: 40px; padding: 0 14px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); }
+  .why { color: var(--muted); margin-top: 6px; }
+  .prose { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .prose h3 { font-family: var(--head); font-size: 17px; margin: 16px 0 6px; }
+  .prose h3:first-child { margin-top: 0; }
+  .prose p { margin: 0 0 10px; }
+  .prose ul { margin: 0 0 10px; padding-left: 20px; }
+  .err { background: #3a1c2a; border: 1px solid #7a3450; color: #ffd2dc; border-radius: 12px; padding: 12px 14px; }
+
+  details.hist { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 14px; }
+  details.hist summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; }
+  .hist-item { display: block; width: 100%; text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+  .hist-item span { display: block; color: var(--muted); font-size: 13px; }
+  .clear { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; }
+
+  dialog { width: min(92vw, 460px); background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  dialog::backdrop { background: rgba(6, 4, 14, 0.7); }
+  dialog h2 { font-family: var(--head); margin: 0 0 6px; font-size: 22px; }
+  dialog p.note { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+  dialog .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+  .sec { min-height: 44px; padding: 0 18px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--line); }
+  .pri { min-height: 44px; padding: 0 18px; border-radius: 12px; background: var(--accent); border: 0; color: var(--accent-ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1 class="brand">Reply Coach<small>Read the conversation. Send the right message.</small></h1>
+    <button class="icon-btn" id="openSettings" aria-label="Settings">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <div class="modes" role="tablist" aria-label="What do you need?">
+    <button class="mode-btn" role="tab" data-mode="reply" aria-selected="true">Write a reply</button>
+    <button class="mode-btn" role="tab" data-mode="analyze" aria-selected="false">Analyze</button>
+    <button class="mode-btn" role="tab" data-mode="flags" aria-selected="false">Check red flags</button>
+    <button class="mode-btn" role="tab" data-mode="decode" aria-selected="false">Decode it</button>
+  </div>
+
+  <div class="field">
+    <label for="who">Who is this with?</label>
+    <select id="who" class="control">
+      <option>Someone I'm dating</option>
+      <option>A crush</option>
+      <option>My partner</option>
+      <option>An ex</option>
+      <option>A friend</option>
+      <option>A family member</option>
+      <option>A coworker or boss</option>
+      <option>Someone else</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="msg">Paste the conversation</label>
+    <textarea id="msg" class="control" placeholder="Paste the messages here. Include both sides if you can."></textarea>
+  </div>
+
+  <div class="row">
+    <button class="ghost" id="pick" type="button">Add a screenshot</button>
+    <input type="file" id="file" accept="image/*" hidden>
+    <div class="thumb" id="thumb"><img id="thumbImg" alt="Attached screenshot"><button type="button" id="rmImg">Remove</button></div>
+  </div>
+
+  <div class="field">
+    <label for="bold">How bold?</label>
+    <select id="bold" class="control">
+      <option>Smooth</option>
+      <option selected>Bold</option>
+      <option>Max</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="goal">What do you want out of this? (optional)</label>
+    <input id="goal" class="control" placeholder="Example: set up a date, apologize, say no politely">
+  </div>
+
+  <button class="go" id="go" type="button">Write replies</button>
+
+  <section class="out" id="out" aria-live="polite"></section>
+
+  <details class="hist" id="hist">
+    <summary>History</summary>
+    <div id="histList"></div>
+    <button class="clear" id="clearHist" type="button">Clear history</button>
+  </details>
+</div>
+
+<dialog id="settings">
+  <h2>Settings</h2>
+  <p class="note">Your key is saved only in this browser on this device. It is sent only to Google to get answers.</p>
+  <div class="field">
+    <label for="key">Gemini API key</label>
+    <input id="key" class="control" type="password" autocomplete="off" placeholder="Paste your key">
+  </div>
+  <div class="field">
+    <label for="model">Model</label>
+    <input id="model" class="control" value="gemini-2.5-flash">
+  </div>
+  <div class="actions">
+    <button class="sec" id="closeSettings" type="button">Cancel</button>
+    <button class="pri" id="saveSettings" type="button">Save</button>
+  </div>
+</dialog>    font-size: 16px;
     line-height: 1.5;
     padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
   }
