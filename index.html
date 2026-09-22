@@ -202,163 +202,6 @@
     <button class="sec" id="closeSettings" type="button">Cancel</button>
     <button class="pri" id="saveSettings" type="button">Save</button>
   </div>
-</dialog>    font-size: 16px;
-    line-height: 1.5;
-    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-  }
-  .wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 48px; }
-
-  .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-  .brand { font-family: var(--head); font-weight: 700; font-size: 26px; letter-spacing: -0.02em; margin: 0; }
-  .brand small { display: block; font-family: var(--body); font-weight: 400; font-size: 14px; color: var(--muted); letter-spacing: 0; }
-
-  button, select, textarea, input { font: inherit; color: inherit; }
-  button { cursor: pointer; }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-  .icon-btn {
-    min-width: 44px; min-height: 44px; border-radius: 12px;
-    background: var(--panel); border: 1px solid var(--line);
-    display: grid; place-items: center;
-  }
-
-  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 5px; margin-bottom: 16px; }
-  .mode-btn { min-height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--muted); font-weight: 600; font-size: 14px; padding: 6px 4px; }
-  .mode-btn[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
-
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
-  .control {
-    width: 100%; background: var(--panel); border: 1px solid var(--line);
-    border-radius: 12px; padding: 12px 14px; min-height: 46px;
-  }
-  textarea.control { min-height: 150px; resize: vertical; }
-  .control::placeholder { color: #6f6a8f; }
-
-  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
-  .ghost { min-height: 44px; padding: 0 16px; border-radius: 12px; background: transparent; border: 1px dashed var(--line); color: var(--text); }
-  .thumb { display: none; align-items: center; gap: 8px; }
-  .thumb.on { display: flex; }
-  .thumb img { height: 44px; width: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
-  .thumb button { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; padding: 0 6px; }
-
-  .go {
-    width: 100%; min-height: 52px; border: 0; border-radius: 14px;
-    background: var(--accent); color: var(--accent-ink);
-    font-family: var(--head); font-weight: 700; font-size: 18px;
-  }
-  .go[disabled] { opacity: 0.6; cursor: progress; }
-
-  .out { margin-top: 24px; }
-  .out h2 { font-family: var(--head); font-size: 20px; margin: 0 0 10px; letter-spacing: -0.01em; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
-  .card .tone { font-weight: 600; color: var(--good); margin-bottom: 4px; }
-  .card p { margin: 0 0 12px; white-space: pre-wrap; }
-  .copy { min-height: 40px; padding: 0 14px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); }
-  .why { color: var(--muted); margin-top: 6px; }
-  .prose { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
-  .prose h3 { font-family: var(--head); font-size: 17px; margin: 16px 0 6px; }
-  .prose h3:first-child { margin-top: 0; }
-  .prose p { margin: 0 0 10px; }
-  .prose ul { margin: 0 0 10px; padding-left: 20px; }
-  .err { background: #3a1c2a; border: 1px solid #7a3450; color: #ffd2dc; border-radius: 12px; padding: 12px 14px; }
-
-  details.hist { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 14px; }
-  details.hist summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; }
-  .hist-item { display: block; width: 100%; text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
-  .hist-item span { display: block; color: var(--muted); font-size: 13px; }
-  .clear { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; }
-
-  dialog { width: min(92vw, 460px); background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
-  dialog::backdrop { background: rgba(6, 4, 14, 0.7); }
-  dialog h2 { font-family: var(--head); margin: 0 0 6px; font-size: 22px; }
-  dialog p.note { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
-  dialog .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
-  .sec { min-height: 44px; padding: 0 18px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--line); }
-  .pri { min-height: 44px; padding: 0 18px; border-radius: 12px; background: var(--accent); border: 0; color: var(--accent-ink); font-weight: 600; }
-</style>
-</head>
-<body>
-<div class="wrap">
-
-  <header class="top">
-    <h1 class="brand">Reply Coach<small>Read the conversation. Send the right message.</small></h1>
-    <button class="icon-btn" id="openSettings" aria-label="Settings">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-    </button>
-  </header>
-
-  <div class="modes" role="tablist" aria-label="What do you need?">
-    <button class="mode-btn" role="tab" data-mode="reply" aria-selected="true">Write a reply</button>
-    <button class="mode-btn" role="tab" data-mode="flags" aria-selected="false">Check red flags</button>
-    <button class="mode-btn" role="tab" data-mode="decode" aria-selected="false">Decode it</button>
-  </div>
-
-  <div class="field">
-    <label for="who">Who is this with?</label>
-    <select id="who" class="control">
-      <option>Someone I'm dating</option>
-      <option>A crush</option>
-      <option>My partner</option>
-      <option>An ex</option>
-      <option>A friend</option>
-      <option>A family member</option>
-      <option>A coworker or boss</option>
-      <option>Someone else</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="msg">Paste the conversation</label>
-    <textarea id="msg" class="control" placeholder="Paste the messages here. Include both sides if you can."></textarea>
-  </div>
-
-  <div class="row">
-    <button class="ghost" id="pick" type="button">Add a screenshot</button>
-    <input type="file" id="file" accept="image/*" hidden>
-    <div class="thumb" id="thumb"><img id="thumbImg" alt="Attached screenshot"><button type="button" id="rmImg">Remove</button></div>
-  </div>
-
-  <div class="field">
-    <label for="bold">How bold?</label>
-    <select id="bold" class="control">
-      <option>Smooth</option>
-      <option selected>Bold</option>
-      <option>Max</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="goal">What do you want out of this? (optional)</label>
-    <input id="goal" class="control" placeholder="Example: set up a date, apologize, say no politely">
-  </div>
-
-  <button class="go" id="go" type="button">Write replies</button>
-
-  <section class="out" id="out" aria-live="polite"></section>
-
-  <details class="hist" id="hist">
-    <summary>History</summary>
-    <div id="histList"></div>
-    <button class="clear" id="clearHist" type="button">Clear history</button>
-  </details>
-</div>
-
-<dialog id="settings">
-  <h2>Settings</h2>
-  <p class="note">Your key is saved only in this browser on this device. It is sent only to Google to get answers.</p>
-  <div class="field">
-    <label for="key">Gemini API key</label>
-    <input id="key" class="control" type="password" autocomplete="off" placeholder="Paste your key">
-  </div>
-  <div class="field">
-    <label for="model">Model</label>
-    <input id="model" class="control" value="gemini-2.5-flash">
-  </div>
-  <div class="actions">
-    <button class="sec" id="closeSettings" type="button">Cancel</button>
-    <button class="pri" id="saveSettings" type="button">Save</button>
-  </div>
 </dialog>
 
 <script>
@@ -375,9 +218,22 @@ Rules:
 - Read behavior like a mentalist: word choice, reply speed and length, who leads, who asks the questions, what they avoid saying. Say when you are guessing.
 - Influence that is fair game: calm confidence, humor, teasing, curiosity hooks, good timing, holding your frame, saying less, making them work a little, honest scarcity of your attention.
 - Never help with gaslighting, guilt-tripping, threats, lying about facts, exploiting insecurities, isolating someone, or pressuring someone who said no. If the goal goes there, say so in one line and give a stronger honest move instead.
+- Never frame the other person as an opponent to beat, their words as "leverage" to strip, or the conversation as a game to win. Read them with genuine curiosity and respect, the way a perceptive friend would, not a rival.
 - Write like a real person texting: short, natural, no corporate tone.`;
 
 const MODES = {
+  analyze: {
+    button: "Analyze conversation",
+    title: "Conversation analysis",
+    json: true,
+    analyze: true,
+    prompt: `Break down this conversation like a sharp social-dynamics coach reading it live. For each message from the OTHER person (skip the user's own messages), give a short "read": what's really going on underneath it (mood, intent, what they want, what they're testing or avoiding). Keep each read to 1-2 sentences, sharp and specific, referencing their actual wording. Do not label their messages as tactics against the user, "leverage" to be countered, or moves in a fight. Read for what a thoughtful, emotionally intelligent friend would notice, not what a rival would exploit.
+Then give:
+- "overall": 2-3 sentences on the general dynamic and mood between the two people right now.
+- "confidence": a number 0-100 for how much you can confidently tell from this much text (short or ambiguous conversations should score low, e.g. under 40).
+- "suggestion": one specific, confident, kind next move or reply for the user, in their own voice, that fits the "How bold?" setting.
+Return JSON only, with this exact shape: {"messages":[{"quote":"","read":""}],"overall":"","confidence":0,"suggestion":""}`
+  },
   reply: {
     button: "Write replies",
     title: "Reply options",
@@ -511,113 +367,17 @@ function showResult(m, out) {
   if (MODES[m].json) {
     let data = null;
     try { data = JSON.parse(out.replace(/```json|```/g, "").trim()); } catch (e) {}
-    if (data && Array.isArray(data.replies)) {
-      data.replies.forEach((r) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        const tone = document.createElement("div");
-        tone.className = "tone";
-        tone.textContent = r.tone || "Option";
-        const p = document.createElement("p");
-        p.textContent = r.text || "";
-        const b = document.createElement("button");
-        b.className = "copy";
-        b.type = "button";
-        b.textContent = "Copy";
-        b.addEventListener("click", () => copyText(r.text || "", b));
-        card.append(tone, p, b);
-        wrap.appendChild(card);
-      });
-      if (data.why) {
-        const w = document.createElement("p");
-        w.className = "why";
-        w.textContent = data.why;
-        wrap.appendChild(w);
-      }
-      return;
-    }
-  }
-  const box = document.createElement("div");
-  box.className = "prose";
-  box.innerHTML = formatProse(out);
-  wrap.appendChild(box);
-}
-
-/* ---------- history ---------- */
-function loadHist() { return store.get("history", []); }
-function saveHist(item) {
-  const list = loadHist();
-  list.unshift(item);
-  store.set("history", list.slice(0, 30));
-  renderHist();
-}
-function renderHist() {
-  const box = $("#histList");
-  box.replaceChildren();
-  const list = loadHist();
-  if (!list.length) {
-    const p = document.createElement("p");
-    p.style.color = "var(--muted)";
-    p.textContent = "Nothing here yet. Your past results will show up on this device.";
-    box.appendChild(p);
-    return;
-  }
-  list.forEach((it) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "hist-item";
-    b.textContent = it.preview;
-    const s = document.createElement("span");
-    s.textContent = MODES[it.mode].title + " - " + new Date(it.t).toLocaleString();
-    b.appendChild(s);
-    b.addEventListener("click", () => { showResult(it.mode, it.out); window.scrollTo({ top: $("#out").offsetTop - 12, behavior: "smooth" }); });
-    box.appendChild(b);
-  });
-}
-$("#clearHist").addEventListener("click", () => { store.set("history", []); renderHist(); });
-
-/* ---------- run ---------- */
-async function run() {
-  const key = store.get("key", "");
-  if (!key) { openSettings(); return; }
-  const text = $("#msg").value.trim();
-  if (!text && !image) { showError("Paste the conversation or add a screenshot first."); return; }
-
-  const who = $("#who").value;
-  const goal = $("#goal").value.trim();
-  const m = mode;
-  setBusy(true);
-  clearOut();
-  try {
-    const parts = [{ text: "Who it is with: " + who + "\nBoldness: " + $("#bold").value + "\nWhat I want: " + (goal || "not specified") + "\n\nConversation:\n" + (text || "(see the screenshot)") }];
-    if (image) parts.push({ inlineData: { mimeType: "image/jpeg", data: image } });
-    const body = {
-      systemInstruction: { parts: [{ text: BASE + "\n\n" + MODES[m].prompt }] },
-      contents: [{ role: "user", parts }],
-      generationConfig: MODES[m].json ? { responseMimeType: "application/json" } : {}
-    };
-    const model = store.get("model", "gemini-2.5-flash");
-    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-      body: JSON.stringify(body)
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error((data && data.error && data.error.message) || ("Request failed (" + res.status + ")."));
-    const cand = data.candidates && data.candidates[0];
-    const out = cand && cand.content && cand.content.parts ? cand.content.parts.map((p) => p.text || "").join("") : "";
-    if (!out) throw new Error("The AI returned nothing. Try again, or reword the conversation.");
-    showResult(m, out);
-    saveHist({ t: Date.now(), mode: m, preview: (text || "Screenshot").slice(0, 80), out });
-  } catch (e) {
-    showError("Something went wrong: " + e.message);
-  } finally {
-    setBusy(false);
-  }
-}
-$("#go").addEventListener("click", run);
-
-renderHist();
-</script>
-</body>
-</html>
+    if (MODES[m].analyze && data) {
+      const conf = Math.max(0, Math.min(100, Number(data.confidence) || 0));
+      const confWrap = document.createElement("div");
+      confWrap.className = "conf-wrap";
+      confWrap.innerHTML = '<div class="conf-label"><span>Read confidence</span><b>' + conf + '%</b></div><div class="conf-track"><div class="conf-fill" style="width:' + conf + '%"></div></div>';
+      wrap.appendChild(confWrap);
+      (data.messages || []).forEach((mmsg) => {
+        const b = document.createElement("div");
+        b.className = "msg-block";
+        const q = document.createElement("div");
+        q.className = "msg-quote";
+        q.textContent = "\u201C" + (mmsg.quote || "") + "\u201D";
+        const r = document.createElement("div");
+    
