@@ -380,4 +380,140 @@ function showResult(m, out) {
         q.className = "msg-quote";
         q.textContent = "\u201C" + (mmsg.quote || "") + "\u201D";
         const r = document.createElement("div");
-    
+        r.className = "msg-read";
+        r.textContent = mmsg.read || "";
+        b.append(q, r);
+        wrap.appendChild(b);
+      });
+      if (data.overall) {
+        const ov = document.createElement("div");
+        ov.className = "overall-box";
+        ov.innerHTML = "<h3>Overall read</h3><p>" + esc(data.overall) + "</p>";
+        wrap.appendChild(ov);
+      }
+      if (data.suggestion) {
+        const card = document.createElement("div");
+        card.className = "card";
+        const tone = document.createElement("div");
+        tone.className = "tone";
+        tone.textContent = "Suggested next move";
+        const p = document.createElement("p");
+        p.textContent = data.suggestion;
+        const cb = document.createElement("button");
+        cb.className = "copy"; cb.type = "button"; cb.textContent = "Copy";
+        cb.addEventListener("click", () => copyText(data.suggestion, cb));
+        card.append(tone, p, cb);
+        wrap.appendChild(card);
+      }
+      return;
+    }
+    if (data && Array.isArray(data.replies)) {
+      data.replies.forEach((r) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        const tone = document.createElement("div");
+        tone.className = "tone";
+        tone.textContent = r.tone || "Option";
+        const p = document.createElement("p");
+        p.textContent = r.text || "";
+        const b = document.createElement("button");
+        b.className = "copy";
+        b.type = "button";
+        b.textContent = "Copy";
+        b.addEventListener("click", () => copyText(r.text || "", b));
+        card.append(tone, p, b);
+        wrap.appendChild(card);
+      });
+      if (data.why) {
+        const w = document.createElement("p");
+        w.className = "why";
+        w.textContent = data.why;
+        wrap.appendChild(w);
+      }
+      return;
+    }
+  }
+  const box = document.createElement("div");
+  box.className = "prose";
+  box.innerHTML = formatProse(out);
+  wrap.appendChild(box);
+}
+
+/* ---------- history ---------- */
+function loadHist() { return store.get("history", []); }
+function saveHist(item) {
+  const list = loadHist();
+  list.unshift(item);
+  store.set("history", list.slice(0, 30));
+  renderHist();
+}
+function renderHist() {
+  const box = $("#histList");
+  box.replaceChildren();
+  const list = loadHist();
+  if (!list.length) {
+    const p = document.createElement("p");
+    p.style.color = "var(--muted)";
+    p.textContent = "Nothing here yet. Your past results will show up on this device.";
+    box.appendChild(p);
+    return;
+  }
+  list.forEach((it) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "hist-item";
+    b.textContent = it.preview;
+    const s = document.createElement("span");
+    s.textContent = MODES[it.mode].title + " - " + new Date(it.t).toLocaleString();
+    b.appendChild(s);
+    b.addEventListener("click", () => { showResult(it.mode, it.out); window.scrollTo({ top: $("#out").offsetTop - 12, behavior: "smooth" }); });
+    box.appendChild(b);
+  });
+}
+$("#clearHist").addEventListener("click", () => { store.set("history", []); renderHist(); });
+
+/* ---------- run ---------- */
+async function run() {
+  const key = store.get("key", "");
+  if (!key) { openSettings(); return; }
+  const text = $("#msg").value.trim();
+  if (!text && !image) { showError("Paste the conversation or add a screenshot first."); return; }
+
+  const who = $("#who").value;
+  const goal = $("#goal").value.trim();
+  const m = mode;
+  setBusy(true);
+  clearOut();
+  try {
+    const parts = [{ text: "Who it is with: " + who + "\nBoldness: " + $("#bold").value + "\nWhat I want: " + (goal || "not specified") + "\n\nConversation:\n" + (text || "(see the screenshot)") }];
+    if (image) parts.push({ inlineData: { mimeType: "image/jpeg", data: image } });
+    const body = {
+      systemInstruction: { parts: [{ text: BASE + "\n\n" + MODES[m].prompt }] },
+      contents: [{ role: "user", parts }],
+      generationConfig: MODES[m].json ? { responseMimeType: "application/json" } : {}
+    };
+    const model = store.get("model", "gemini-2.5-flash");
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error((data && data.error && data.error.message) || ("Request failed (" + res.status + ")."));
+    const cand = data.candidates && data.candidates[0];
+    const out = cand && cand.content && cand.content.parts ? cand.content.parts.map((p) => p.text || "").join("") : "";
+    if (!out) throw new Error("The AI returned nothing. Try again, or reword the conversation.");
+    showResult(m, out);
+    saveHist({ t: Date.now(), mode: m, preview: (text || "Screenshot").slice(0, 80), out });
+  } catch (e) {
+    showError("Something went wrong: " + e.message);
+  } finally {
+    setBusy(false);
+  }
+}
+$("#go").addEventListener("click", run);
+
+renderHist();
+</script>
+</body>
+</html>
